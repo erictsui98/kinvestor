@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class='row mb-3'>
+  <div class='col'>
+    <article class="media content-section">
+      <div class="media-body">
+        <div class="article-metadata">
+          <h2>Investment Duration</h2>
+        </div>
+        <h3>{{ info.duration }} year</h3>
+        <a class="btn btn-outline-info" aria-pressed="true" href="{% url 'info-update' info.pk %}">edit</a>
+      </div>
+    </article>
+  </div>
+  <div class='col'>
+    <article class="media content-section">
+      <div class="media-body">
+        <div class="article-metadata">
+          <h2>Target Return</h2>
+        </div>
+        <h3>{{ info.target_return }}</h3>
+        <a class="btn btn-outline-info" aria-pressed="true" href="{% url 'info-update' info.pk %}">edit</a>
+      </div>
+    </article>
+  </div>
+
+</div>
+<article class="media content-section">
+  <!-- <img class="rounded-circle article-img" src="{{ p.author.profile.image.url }}"> -->
+  <div class="media-body">
+    <div class="article-metadata">
+      <h2>Stock</h2>
+      <!-- <small class="text-muted">{{ p.dataposted|date:"F d, Y" }}</small> -->
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Ticker</th>
+          <th scope="col">Expected Return</th>
+          <th scope="col"><a class="btn btn-outline-info" href="{% url 'post-create' %}">Add Stock</a></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for p in posts %}
+        <tr>
+          <td style="width: 20%"><a href="{% url 'post-detail' p.id %}">{{ p.ticker }}</a></td>
+          <td style="width: 40%">{{ p.expected_return }}</td>
+          <td style="width: 20%"><div class="btn-group">
+            <a class="btn btn-outline-info" aria-pressed="true" href="{% url 'post-update' p.id %}">edit</a>
+            <a class="btn btn-outline-danger" aria-pressed="true" href="{% url 'post-delete' p.id %}">delete</a>
+          </div></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <!--post.id pass as the <int:pk>-->
+      <!-- <p class="article-content">{{ p.content }}</p> -->
+    </table>
+  </div>
+</article>
+{% endblock content %}

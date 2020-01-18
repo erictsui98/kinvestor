@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+	<ul class="nav nav-pills justify-content-center">
+		<li class="nav-item">
+			<a class="nav-link" href="{% url 'basic-daily_return'%}"><<</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link active" href="{% url 'past-avg_return'%}">Avg. Return</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="{% url 'past-estP'%}">Est. Portfolio Optimization</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="{% url 'past-calP'%}">Cal. Portfolio Optimization</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="{% url 'past-PvsI'%}">Portfolio Optimiztation vs Individual stocks</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="{% url 'exp-estP'%}">>></a>
+		</li>
+	</ul>
+	<div class='row mt-3'>
+	<div class='col'>
+		<h5>Mean Return(daily) in the past 2 years:</h5>
+		<table class="table">
+			<thead>
+			    <tr>
+			      <th scope="col">Ticker</th>
+			      <th scope="col">Return</th>
+			    </tr>
+  			</thead>
+			<tbody>
+				{% for i in return %}
+				<tr>
+					<td>{{i.name}}</td>
+					<td>{{i.mean}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class='col'>
+		<h5>Expected Return(daily) in the investment period:</h5>
+		<table class="table">
+			<thead>
+			    <tr>
+			      <th scope="col">Ticker</th>
+			      <th scope="col">Return</th>
+			    </tr>
+  			</thead>
+			<tbody>
+				{% for i in return %}
+				<tr>
+					<td>{{i.name}}</td>
+					<td>{{i.exp}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	</div>
+{% endblock content %}

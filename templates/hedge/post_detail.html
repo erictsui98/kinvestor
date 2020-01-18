@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+    <article class="media content-section">
+        <!-- <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">  -->
+        <!--keep default setting -> change p to object-->
+        <div class="media-body">
+          <div class="article-metadata">
+            <h1 class="mr-2" href="#">{{ object.ticker }}</h1>
+            <!-- {% if object.author == user %} -->
+              <!-- <div> -->
+              <!-- <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a> <!--if current post author, go to url post-update route, and tell which object to update--> -->
+              <!--class button and secondary = more muted button, sm = small button, margin top and button =1-->
+              <!-- <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a> -->
+              <!-- </div> -->
+              <!-- {% endif %} -->
+          </div>
+          <h5 class="article-title">Expected Return: {{ object.expected_return }}</h5>
+          </div>
+    </article>
+{% endblock content %}
+
+<!--two methods to update the loop vaiable 1. change to list in views.py 2. change to object in html (object.auther)-->

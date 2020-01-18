@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+	<ul class="nav nav-pills justify-content-center">
+		<li class="nav-item">
+			<a class="nav-link" href="{% url 'past-PvsI'%}"><<</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="{% url 'exp-estP'%}">Est. Portfolio Optimization</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="{% url 'exp-calP'%}">Cal. Portfolio Optimization</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link active" href="{% url 'exp-PvsI'%}">Portfolio Optimiztation vs Individual stocks</a>
+		</li>
+	</ul>
+	{{ chart|safe }}
+
+	<h5 class="mt-3">Maximum Sharpe Ratio Portfolio Allocation</h5>
+	<h6>Annualised Return: {{ maxRtn }}</h6>
+	<h6>Annualised Volatility: {{ maxVol }}</h6>
+	<table class="table">
+		<thead>
+		    <tr>
+		      <th scope="col"></th>
+			  {% for i in table %}
+			  <th scope="col">{{ i.name }}</th>
+			  {% endfor %}
+
+		    </tr>
+			</thead>
+		<tbody>
+			<tr>
+		      	<th scope="row">Allocation</th>
+			{% for i in table %}
+				<td>{{i.max}}</td>
+			{% endfor %}
+			</tr>
+		</tbody>
+	</table>
+	
+	<h5 class="mt-3">Minimum Volatility Ratio Portfolio Allocation</h5>
+	<h6>Annualised Return: {{ minRtn }}</h6>
+	<h6>Annualised Volatility: {{ minVol }}</h6>
+	<table class="table">
+		<thead>
+		    <tr>
+		      <th scope="col"></th>
+			  {% for i in table %}
+			  <th scope="col">{{ i.name }}</th>
+			  {% endfor %}
+
+		    </tr>
+			</thead>
+		<tbody>
+			<tr>
+		      	<th scope="row">Allocation</th>
+			{% for i in table %}
+				<td>{{i.min}}</td>
+			{% endfor %}
+			</tr>
+		</tbody>
+	</table>
+
+	<h5 class="mt-3">Minimum Volatility of The Target Return Portfolio Allocation</h5>
+	<h6>Annualised Return: {{ tarRtn }}</h6>
+	<h6>Annualised Volatility: {{ tarVol }}</h6>
+	<table class="table">
+		<thead>
+		    <tr>
+		      <th scope="col"></th>
+			  {% for i in table %}
+			  <th scope="col">{{ i.name }}</th>
+			  {% endfor %}
+		    </tr>
+			</thead>
+		<tbody>
+			<tr>
+		      	<th scope="row">Allocation</th>
+			{% for i in table %}
+				<td>{{i.tar}}</td>
+			{% endfor %}
+			</tr>
+		</tbody>
+	</table>
+
+	<h5 class="mt-3">Individual Stock Returns and Volatility</h5>
+	<table class="table">
+		<thead>
+		    <tr>
+		      <th scope="col"></th>
+			  {% for i in table %}
+			  <th scope="col">{{ i.name }}</th>
+			  {% endfor %}
+		    </tr>
+			</thead>
+		<tbody>
+			<tr>
+		      	<th scope="row">Annuaised Return</th>
+				{% for i in table %}
+					<td>{{ i.anRtn }}</td>
+				{% endfor %}
+			</tr>
+			<tr>
+		      	<th scope="row">Annuaised Volatility</th>
+				{% for i in table %}
+					<td>{{ i.anVol }}</td>
+				{% endfor %}
+			</tr>
+		</tbody>
+	</table>
+	
+{% endblock content %}
