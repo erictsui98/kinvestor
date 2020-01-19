@@ -14,6 +14,6 @@ urlpatterns = [
     path('exp/calP/', views.expCalP ,name='exp-calP'),
     path('exp/PvsI/', views.expPvsI ,name='exp-PvsI'),
 
-    #path("refresh/", views.refresh, name="refresh"),
+    path("refresh/", views.refresh, name="refresh"),
 
 ]
