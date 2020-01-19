@@ -20,7 +20,7 @@ matplotlib.use('agg')
 plt.style.use('fivethirtyeight')
 np.random.seed(777)
 
-num_stocks = Post.objects.count()
+num_stocks = 10
 info = Basic.objects.first()
 investment_duration = info.duration
 return_target = info.target_return
