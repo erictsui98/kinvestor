@@ -36,6 +36,7 @@ for i in Post.objects.order_by('ticker'):
 for i in expected_annual_returns:
     expected_daily_returns.append(i/252.0)
 '''
+num_stocks = 10;
 stocks = ['AAPL', 'AMZN', 'CSCO', 'CVS', 'DIS', 'GOOGL', 'JPM', 'MSFT', 'V', 'WFC']
 investment_duration = 1
 return_target = 0.22
@@ -217,7 +218,7 @@ print('---------------------run calculation---------------------')
 # -------------------------------------------------------------------------------
 
 from django.urls import reverse
-
+'''
 def refresh(request):
     # 1.0
     global num_stocks, info, investment_duration, return_target, stocks, expected_annual_returns, expected_daily_returns, data, df, table
@@ -285,7 +286,7 @@ def refresh(request):
     return price(request)
 
 # view -------------------------------------------------------------------------------
-
+'''
 def price(request):
     fig = plt.figure(figsize=(11, 6))
     for c in table.columns.values:
