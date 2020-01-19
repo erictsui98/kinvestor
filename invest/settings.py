@@ -35,7 +35,6 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'hedge.apps.HedgeConfig',
     'graph.apps.GraphConfig',
-
     'django_pandas',
     'seaborn',
     'django_matplotlib',
