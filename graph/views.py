@@ -13,6 +13,8 @@ from pandas.plotting import register_matplotlib_converters
 from hedge.models import Post, Basic
 from django.http import HttpResponse
 
+import celery
+app = celery.Celery('graph') 
 ## time consuming data collection and calculation (run once when the server start)
 register_matplotlib_converters()
 matplotlib.use('agg')
@@ -71,13 +73,14 @@ cov_matrix = returns.cov()
 num_portfolios = 50000
 risk_free_rate = 0.0178
 
-
+@app.task
 # 2.1
 def portfolio_annualised_performance(weights, mean_returns, cov_matrix):
     returns = np.sum(mean_returns*weights ) *252
     std = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights))) * np.sqrt(252)
     return std, returns
 
+@app.task
 def random_portfolios(num_portfolios, mean_returns, cov_matrix, risk_free_rate):
     results = np.zeros((3,num_portfolios))
     weights_record = []
@@ -91,6 +94,7 @@ def random_portfolios(num_portfolios, mean_returns, cov_matrix, risk_free_rate):
         results[2,i] = (portfolio_return - risk_free_rate) / portfolio_std_dev
     return results, weights_record
 
+@app.task
 def display_simulated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate, return_target):
     results, weights = random_portfolios(num_portfolios, mean_returns, cov_matrix, risk_free_rate)
     max_sharpe_idx = np.argmax(results[2])
@@ -115,16 +119,18 @@ def display_simulated_ef_with_random(mean_returns, cov_matrix, num_portfolios, r
 # for 2.1 
 results21, weights21, sdp21, rp21, max_sharpe_allocation21, min_vol_allocation21, sdp_min21, rp_min21, = display_simulated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate, return_target=0)
 
-
+@app.task
 # 2.2
 def con1(x):
     return p.sum(x) - 1
 
 constraints = {'type': 'eq', 'fun': con1}
-
+@app.task
 def neg_sharpe_ratio(weights, mean_returns, cov_matrix, risk_free_rate):
     p_var, p_ret = portfolio_annualised_performance(weights, mean_returns, cov_matrix)
     return -(p_ret - risk_free_rate) / p_var
+
+@app.task
 def max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate):
     num_assets = len(mean_returns)
     args = (mean_returns, cov_matrix, risk_free_rate)
@@ -135,8 +141,11 @@ def max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate):
     method='SLSQP', bounds=bounds, constraints=constraints)
     return result
 
+@app.task
 def portfolio_volatility(weights, mean_returns, cov_matrix):
     return portfolio_annualised_performance(weights, mean_returns, cov_matrix)[0]
+
+@app.task
 def min_variance(mean_returns, cov_matrix):
     num_assets = len(mean_returns)
     args = (mean_returns, cov_matrix)
@@ -147,6 +156,7 @@ def min_variance(mean_returns, cov_matrix):
     method='SLSQP', bounds=bounds, constraints=constraints)
     return result
 
+@app.task
 def efficient_return(mean_returns, cov_matrix, target):
     num_assets = len(mean_returns)
     args = (mean_returns, cov_matrix)
@@ -157,12 +167,14 @@ def efficient_return(mean_returns, cov_matrix, target):
     bounds = tuple((0,1) for asset in range(num_assets))
     result = sco.minimize(portfolio_volatility, num_assets*[1./num_assets,], args=args, method='SLSQP', bounds=bounds, constraints=constraints)
     return result
+@app.task
 def efficient_frontier(mean_returns, cov_matrix, returns_range):
     efficients = []
     for ret in returns_range:
         efficients.append(efficient_return(mean_returns, cov_matrix, ret))
     return efficients
 
+@app.task
 def display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate, return_target=0):
     results, _ = random_portfolios(num_portfolios,mean_returns, cov_matrix, risk_free_rate)
     max_sharpe = max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate)
@@ -188,6 +200,7 @@ def display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, 
 max_sharpe22, sdp22, rp22, max_sharpe_allocation22, min_vol_allocation22, min_vol22, sdp_min22, rp_min22 = display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate, return_target=0)
 results22 = results21
 
+@app.task
 def display_ef_with_selected(mean_returns, cov_matrix, risk_free_rate, return_target):
     max_sharpe = max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate)
     sdp, rp = portfolio_annualised_performance(max_sharpe['x'], mean_returns, cov_matrix)
@@ -227,6 +240,7 @@ print('---------------------run calculation---------------------')
 
 from django.urls import reverse
 
+@app.task
 def refresh(request):
     # 1.0
     global num_stocks, info, investment_duration, return_target, stocks, expected_annual_returns, expected_daily_returns, data, df, table
@@ -309,6 +323,7 @@ def refresh(request):
     print(expected_daily_returns)    
     return price(request)
 
+@app.task
 # view -------------------------------------------------------------------------------
 def price(request):
     fig = plt.figure(figsize=(11, 6))
@@ -322,6 +337,7 @@ def price(request):
     }
     return render(request, 'graph/price.html', context)
 
+@app.task
 def daily_return(request):
     fig = plt.figure(figsize=(11, 6))
     returns = table.pct_change()
@@ -337,7 +353,7 @@ def daily_return(request):
     return render(request, 'graph/daily_return.html', context)
 
 # -------------------------------------------------------------------------------
-
+@app.task
 def avg_return(request):
     rtn = []
     for i in range(num_stocks):
@@ -349,6 +365,7 @@ def avg_return(request):
     }
     return render(request, 'graph/past/avg_return.html', context)
 #  2.1
+@app.task
 def pastEstP(request):
     fig, ax = plt.subplots(figsize=(11, 6))
     plt.scatter(results21[0,:],results21[1,:],c=results21[2,:],cmap='YlGnBu', marker='o', s=10, alpha=0.3)
@@ -383,6 +400,8 @@ def pastEstP(request):
     }
     return render(request, 'graph/past/estP.html', context)
 # 2.2
+
+@app.task
 def pastCalP(request):
     fig, ax = plt.subplots(figsize=(11, 6))
     plt.scatter(results22[0,:],results22[1,:],c=results22[2,:],cmap='YlGnBu', marker='o', s=10, alpha=0.3)
@@ -421,6 +440,8 @@ def pastCalP(request):
     }
     return render(request, 'graph/past/CalP.html', context)
 # 2.3 (2.2)
+
+@app.task
 def pastPvsI(request):
     fig, ax = plt.subplots(figsize=(11, 6))
     ax.scatter(an_vol,an_rt,marker='o',s=200)
@@ -467,6 +488,7 @@ def pastPvsI(request):
 
 # -------------------------------------------------------------------------------
 # 3.1
+@app.task
 def expEstP(request):
     fig, ax = plt.subplots(figsize=(11, 6))
     plt.scatter(results31[0,:],results31[1,:],c=results31[2,:],cmap='YlGnBu', marker='o', s=10, alpha=0.3)
@@ -505,6 +527,8 @@ def expEstP(request):
     }
     return render(request, 'graph/expected/estP.html', context)
 # 3.2
+
+@app.task
 def expCalP(request):
     fig, ax = plt.subplots(figsize=(11, 6))
     plt.scatter(results32[0,:],results32[1,:],c=results32[2,:],cmap='YlGnBu', marker='o', s=10, alpha=0.3)
@@ -547,6 +571,8 @@ def expCalP(request):
     }
     return render(request, 'graph/expected/CalP.html', context)
 # 3.3
+
+@app.task
 def expPvsI(request):
     fig, ax = plt.subplots(figsize=(11, 6))
     ax.scatter(an_vol3,an_rt3,marker='o',s=200)

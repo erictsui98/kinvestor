@@ -24,7 +24,5 @@ urlpatterns = [
          
     path("hedge/", include("hedge.urls")),
 
-    path('', include('graph.urls')),
-    
-    path('django-rq/', include('django_rq.urls'))
+    path('', include('graph.urls'))
 ] #list
