@@ -5,12 +5,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 # import numpy as np
 # import matplotlib.pyplot as plt, mpld3
-import celery
-app = celery.Celery('hedge')
 
 
-
-@app.task
 def home(request):
     context = {
         'posts': Post.objects.all()
