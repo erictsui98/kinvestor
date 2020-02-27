@@ -27,7 +27,7 @@ DEBUG = True
 if 'DYNO' in os.environ:    # Running on Heroku
     DEBUG = False
 
-ALLOWED_HOSTS = ['kinvestor.herokuapp.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_rq',
 ]
 
 MIDDLEWARE = [

@@ -19,7 +19,8 @@ matplotlib.use('agg')
 
 plt.style.use('fivethirtyeight')
 np.random.seed(777)
-'''
+
+
 num_stocks = Post.objects.count()
 info = Basic.objects.first()
 investment_duration = info.duration
@@ -35,7 +36,7 @@ for i in Post.objects.order_by('ticker'):
 
 for i in expected_annual_returns:
     expected_daily_returns.append(i/252.0)
-'''
+
 '''
 num_stocks = 10;
 stocks = ['AAPL', 'AMZN', 'CSCO', 'CVS', 'DIS', 'GOOGL', 'JPM', 'MSFT', 'V', 'WFC']
@@ -44,12 +45,6 @@ return_target = 0.22
 expected_daily_returns = [0.0007936507936507937, 0.001507936507936508, 0.0005555555555555556, 0.0011904761904761904, 0.0003492063492063492, 0.0004365079365079365, 0.0010317460317460319, 0.0004761904761904762, 0.00029365079365079364, 0.0011111111111111111]
 expected_annual_returns =  [0.2, 0.38, 0.14, 0.3, 0.088, 0.11, 0.26, 0.12, 0.074, 0.28]
 '''
-num_stocks = 3
-stocks = ['AAPL', 'AMZN', 'CSCO']
-investment_duration = 1
-return_target = 0.22
-expected_daily_returns = [0.0007936507936507937, 0.001507936507936508, 0.0005555555555555556]
-expected_annual_returns =  [0.2, 0.38, 0.14]
 
 quandl.ApiConfig.api_key = 'PrW6L55BexiSBEqWU25u'
 data = quandl.get_table('WIKI/PRICES', 
@@ -238,7 +233,7 @@ from django.urls import reverse
 def refresh(request):
     # 1.0
     global num_stocks, info, investment_duration, return_target, stocks, expected_annual_returns, expected_daily_returns, data, df, table
-    '''
+    
     num_stocks = Post.objects.count()
     info = Basic.objects.first()
     investment_duration = info.duration
@@ -254,7 +249,7 @@ def refresh(request):
 
     for i in expected_annual_returns:
         expected_daily_returns.append(i/252.0)
-    '''
+    
     '''
     num_stocks = 10
     stocks = ['AAPL', 'AMZN', 'CSCO', 'CVS', 'DIS', 'GOOGL', 'JPM', 'MSFT', 'V', 'WFC']
@@ -263,12 +258,6 @@ def refresh(request):
     expected_daily_returns = [0.0007936507936507937, 0.001507936507936508, 0.0005555555555555556, 0.0011904761904761904, 0.0003492063492063492, 0.0004365079365079365, 0.0010317460317460319, 0.0004761904761904762, 0.00029365079365079364, 0.0011111111111111111]
     expected_annual_returns =  [0.2, 0.38, 0.14, 0.3, 0.088, 0.11, 0.26, 0.12, 0.074, 0.28]
     '''
-    num_stocks = 3
-    stocks = ['AAPL', 'AMZN', 'CSCO']
-    investment_duration = 1
-    return_target = 0.22
-    expected_daily_returns = [0.0007936507936507937, 0.001507936507936508, 0.0005555555555555556]
-    expected_annual_returns =  [0.2, 0.38, 0.14]
 
     quandl.ApiConfig.api_key = 'PrW6L55BexiSBEqWU25u'
     data = quandl.get_table('WIKI/PRICES', 
