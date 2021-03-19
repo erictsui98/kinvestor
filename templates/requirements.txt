@@ -33,7 +33,7 @@ mpld3==0.3.1.dev1
 numpy==1.18.0
 pandas==0.25.3
 pefile==2018.8.8
-Pillow==7.0.0
+Pillow==8.1.1
 pipenv==2018.11.26
 pycparser==2.19
 PyInstaller==3.4
