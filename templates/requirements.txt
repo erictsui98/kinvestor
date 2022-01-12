@@ -34,7 +34,7 @@ numpy==1.18.0
 pandas==0.25.3
 pefile==2018.8.8
 Pillow==7.0.0
-pipenv==2018.11.26
+pipenv==2022.1.8
 pycparser==2.19
 PyInstaller==3.4
 pylint==2.4.4
